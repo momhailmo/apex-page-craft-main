@@ -28,7 +28,6 @@ function Box({ title, color, heightPx, imageUrl }: BoxProps) {
           className={cn(
             "group relative w-full rounded-xl border bg-white shadow-sm transition hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-600 disabled:cursor-not-allowed",
             "overflow-hidden",
-            color,
           )}
           style={{ background: state.theme.boxDefaultBg || undefined }}
           disabled={!modalEnabled}
