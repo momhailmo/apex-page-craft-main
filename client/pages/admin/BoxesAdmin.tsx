@@ -14,10 +14,12 @@ function expandShortHex(hex?: string): string | undefined {
 
 function RichTextEditor({ value, onChange }: { value: string; onChange: (html: string) => void }) {
   const [html, setHtml] = useState<string>(value || "");
+  const ref = useMemo(() => ({ current: null as HTMLDivElement | null }), []);
   useEffect(() => setHtml(value || ""), [value]);
   const exec = (cmd: string, arg?: string) => {
     document.execCommand(cmd, false, arg);
-    onChange((document.getElementById("rte-temp") as HTMLDivElement)?.innerHTML || "");
+    const cur = (ref as any).current as HTMLDivElement | null;
+    onChange(cur?.innerHTML || "");
   };
   return (
     <div className="border rounded">
@@ -31,7 +33,7 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (html: s
         <span className="px-2 py-1">😊</span>
       </div>
       <div
-        id="rte-temp"
+        ref={(node) => ((ref as any).current = node)}
         contentEditable
         suppressContentEditableWarning
         className="min-h-[100px] p-3 text-sm whitespace-pre-wrap break-words"
