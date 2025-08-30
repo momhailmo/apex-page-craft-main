@@ -15,10 +15,33 @@ export type Slide = {
 };
 export type BoxBackground =
   | { kind: "color"; color: string }
-  | { kind: "gradient"; from: string; to: string; direction?: "to top" | "to bottom" | "to left" | "to right" | "to top right" | "to top left" | "to bottom right" | "to bottom left" }
-  | { kind: "image"; url: string; scale?: number; opacity?: number; overlay?: "none" | "darken" | "lighten"; overlayStrength?: number };
+  | {
+      kind: "gradient";
+      from: string;
+      to: string;
+      direction?:
+        | "to top"
+        | "to bottom"
+        | "to left"
+        | "to right"
+        | "to top right"
+        | "to top left"
+        | "to bottom right"
+        | "to bottom left";
+    }
+  | {
+      kind: "image";
+      url: string;
+      scale?: number;
+      opacity?: number;
+      overlay?: "none" | "darken" | "lighten";
+      overlayStrength?: number;
+    };
 
-export type BoxShadow = { intensity: number; direction: "top-left" | "top-right" | "bottom-left" | "bottom-right" };
+export type BoxShadow = {
+  intensity: number;
+  direction: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+};
 
 export type Box = {
   id: string;
@@ -60,7 +83,14 @@ export type FooterConfig = {
       string
     >
   >;
-  socialOrder?: ("facebook" | "twitter" | "instagram" | "linkedin" | "youtube" | "github")[];
+  socialOrder?: (
+    | "facebook"
+    | "twitter"
+    | "instagram"
+    | "linkedin"
+    | "youtube"
+    | "github"
+  )[];
   background?: BoxBackground;
 };
 export type ThemeConfig = {
@@ -109,7 +139,13 @@ function sanitizeConfig(data: SiteConfig): SiteConfig {
     const bg = b.background as any;
     let background: BoxBackground | undefined = undefined;
     if (!bg) background = undefined;
-    else if (bg.kind === "color") background = { kind: "color", color: expandShortHex((bg.color || bg.value) as string) || (bg.value as string) };
+    else if (bg.kind === "color")
+      background = {
+        kind: "color",
+        color:
+          expandShortHex((bg.color || bg.value) as string) ||
+          (bg.value as string),
+      };
     else if (bg.kind === "gradient")
       background = {
         kind: "gradient",
@@ -124,7 +160,8 @@ function sanitizeConfig(data: SiteConfig): SiteConfig {
         scale: typeof bg.scale === "number" ? bg.scale : 100,
         opacity: typeof bg.opacity === "number" ? bg.opacity : 1,
         overlay: bg.overlay || "none",
-        overlayStrength: typeof bg.overlayStrength === "number" ? bg.overlayStrength : 0.4,
+        overlayStrength:
+          typeof bg.overlayStrength === "number" ? bg.overlayStrength : 0.4,
       };
 
     return {
@@ -350,7 +387,7 @@ const DEFAULTS: SiteConfig = {
   footer: {
     text: `© ${new Date().getFullYear()} NovaTech. All rights reserved.`,
     socials: {},
-    socialOrder: ["facebook","twitter","instagram","linkedin"],
+    socialOrder: ["facebook", "twitter", "instagram", "linkedin"],
     background: { kind: "color", color: "#0a0a0a" },
   },
   theme: {

@@ -5,10 +5,18 @@ import { bgStyleFrom } from "@/lib/background";
 
 export default function SiteFooter() {
   const { state } = useSiteConfig();
-  const socialOrder = state.footer.socialOrder || ["facebook","twitter","instagram","linkedin"];
+  const socialOrder = state.footer.socialOrder || [
+    "facebook",
+    "twitter",
+    "instagram",
+    "linkedin",
+  ];
   const socials = state.footer.socials || {};
   return (
-    <footer className="mt-24 text-footer-foreground" style={bgStyleFrom(state.footer.background as any)}>
+    <footer
+      className="mt-24 text-footer-foreground"
+      style={bgStyleFrom(state.footer.background as any)}
+    >
       <div className="mx-auto max-w-[1200px] px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         <div>
           <h3 className="text-lg font-semibold mb-3">
@@ -51,11 +59,24 @@ export default function SiteFooter() {
               const url = (socials as any)[k];
               if (!url) return null;
               return (
-                <a key={k} aria-label={k} href={url} className="hover:opacity-90">
-                  {k === "facebook" && <Facebook className="h-5 w-5 text-[#1877F2]" />}
-                  {k === "twitter" && <Twitter className="h-5 w-5 text-[#1DA1F2]" />}
-                  {k === "instagram" && <Instagram className="h-5 w-5 text-[#E1306C]" />}
-                  {k === "linkedin" && <Linkedin className="h-5 w-5 text-[#0A66C2]" />}
+                <a
+                  key={k}
+                  aria-label={k}
+                  href={url}
+                  className="hover:opacity-90"
+                >
+                  {k === "facebook" && (
+                    <Facebook className="h-5 w-5 text-[#1877F2]" />
+                  )}
+                  {k === "twitter" && (
+                    <Twitter className="h-5 w-5 text-[#1DA1F2]" />
+                  )}
+                  {k === "instagram" && (
+                    <Instagram className="h-5 w-5 text-[#E1306C]" />
+                  )}
+                  {k === "linkedin" && (
+                    <Linkedin className="h-5 w-5 text-[#0A66C2]" />
+                  )}
                 </a>
               );
             })}

@@ -13,7 +13,8 @@ export default function SiteHeader() {
       try {
         const res = await fetch("/api/messages");
         const data = await res.json();
-        if (!stop) setCount((data.items || []).filter((m: any) => !m.read).length);
+        if (!stop)
+          setCount((data.items || []).filter((m: any) => !m.read).length);
       } catch {
         if (!stop) setCount(0);
       }
@@ -31,8 +32,10 @@ export default function SiteHeader() {
       (el as HTMLElement).style.background = state.theme.pageBg || "#ffffff";
   }, [state.theme.pageBg]);
   return (
-    <header className={cn("w-full border-b border-neutral-200")}
-      style={bgStyleFrom(state.header.background as any)}>
+    <header
+      className={cn("w-full border-b border-neutral-200")}
+      style={bgStyleFrom(state.header.background as any)}
+    >
       <div className="mx-auto max-w-[1200px] px-6 py-4 flex items-center justify-between h-[70px]">
         <a
           href="/"

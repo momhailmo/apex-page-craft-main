@@ -1,7 +1,14 @@
 export type AnyBackground =
   | { kind: "color"; color: string }
   | { kind: "gradient"; from: string; to: string; direction?: string }
-  | { kind: "image"; url: string; scale?: number; opacity?: number; overlay?: "none" | "darken" | "lighten"; overlayStrength?: number };
+  | {
+      kind: "image";
+      url: string;
+      scale?: number;
+      opacity?: number;
+      overlay?: "none" | "darken" | "lighten";
+      overlayStrength?: number;
+    };
 
 export function bgStyleFrom(background?: AnyBackground): React.CSSProperties {
   if (!background) return {};

@@ -4,7 +4,12 @@ import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { getSlider, updateSlider } from "./routes/slider";
 import { postContact } from "./routes/contact";
-import { listMessages, createMessage, updateMessage, deleteMessage } from "./routes/messages";
+import {
+  listMessages,
+  createMessage,
+  updateMessage,
+  deleteMessage,
+} from "./routes/messages";
 
 export function createServer() {
   const app = express();

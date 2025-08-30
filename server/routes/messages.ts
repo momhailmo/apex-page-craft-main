@@ -2,7 +2,11 @@ import { RequestHandler } from "express";
 import { z } from "zod";
 import fs from "fs";
 import path from "path";
-import { CreateMessageRequest, ListMessagesResponse, MessageItem } from "@shared/api";
+import {
+  CreateMessageRequest,
+  ListMessagesResponse,
+  MessageItem,
+} from "@shared/api";
 
 const DATA_PATH = path.join(import.meta.dirname, "../messages.json");
 
@@ -43,7 +47,8 @@ export const listMessages: RequestHandler = (req, res) => {
 
 export const createMessage: RequestHandler = (req, res) => {
   const parsed = createSchema.safeParse(req.body as CreateMessageRequest);
-  if (!parsed.success) return res.status(400).json({ error: "Invalid payload" });
+  if (!parsed.success)
+    return res.status(400).json({ error: "Invalid payload" });
   const now = new Date().toISOString();
   const item: MessageItem = {
     id: crypto.randomUUID(),
