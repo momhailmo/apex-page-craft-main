@@ -36,7 +36,7 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (html: s
         <button onClick={() => exec("insertUnorderedList")} className="px-2 py-1 rounded bg-neutral-100 hover:bg-neutral-200">• List</button>
         <button onClick={() => exec("formatBlock", "H3")} className="px-2 py-1 rounded bg-neutral-100 hover:bg-neutral-200">H3</button>
         <button onClick={() => exec("formatBlock", "P")} className="px-2 py-1 rounded bg-neutral-100 hover:bg-neutral-200">P</button>
-        <span className="px-2 py-1">😊</span>
+        <button onClick={() => insertEmoji("😊")} className="px-2 py-1 rounded bg-neutral-100 hover:bg-neutral-200">😊</button>
       </div>
       <div
         ref={ref}
