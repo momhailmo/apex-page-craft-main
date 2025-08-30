@@ -91,18 +91,18 @@ export default function ContactSection() {
         setStatus(data.message);
         return;
       }
+      // Also persist to backend messages store
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          subject: form.subject,
+          message: form.message,
+        }),
+      });
       setStatus(data.message);
-      try {
-        const arr = JSON.parse(localStorage.getItem("contactMessages") || "[]");
-        arr.unshift({
-          ...form,
-          id: Date.now().toString(),
-          read: false,
-          at: new Date().toISOString(),
-        });
-        localStorage.setItem("contactMessages", JSON.stringify(arr));
-        window.dispatchEvent(new CustomEvent("contact-messages-change"));
-      } catch {}
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
       setStatus("Something went wrong. Please try again.");
