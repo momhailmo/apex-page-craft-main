@@ -13,6 +13,13 @@ export type Slide = {
   link?: string;
   hidden?: boolean;
 };
+export type BoxBackground =
+  | { kind: "color"; color: string }
+  | { kind: "gradient"; from: string; to: string; direction?: "to top" | "to bottom" | "to left" | "to right" | "to top right" | "to top left" | "to bottom right" | "to bottom left" }
+  | { kind: "image"; url: string; scale?: number; opacity?: number; overlay?: "none" | "darken" | "lighten"; overlayStrength?: number };
+
+export type BoxShadow = { intensity: number; direction: "top-left" | "top-right" | "bottom-left" | "bottom-right" };
+
 export type Box = {
   id: string;
   title: string;
@@ -20,13 +27,16 @@ export type Box = {
   content?: string; // rich text html
   description?: string; // rich text html
   buttonLabel?: string;
+  ctaMode?: "button" | "icon" | "both";
   modalEnabled?: boolean;
   modalStyle?: { bg?: string; text?: string; shadow?: string; radius?: number };
   imageUrl?: string;
   align?: "left" | "center" | "right";
   size?: "small" | "medium" | "large";
   height?: number; // px
-  background?: { kind: "color" | "gradient" | "image"; value: string };
+  borderRadius?: number; // px
+  shadow?: BoxShadow;
+  background?: BoxBackground;
   hidden?: boolean;
 };
 export type Logo = { id: string; url: string; href?: string; hidden?: boolean };
@@ -92,16 +102,43 @@ function expandShortHex(hex?: string | null): string | undefined {
 function sanitizeConfig(data: SiteConfig): SiteConfig {
   const theme = data.theme || ({} as any);
   const fix = (v?: string) => expandShortHex(v) || v;
-  const boxes = (data.boxes || []).map((b) => ({
-    ...b,
-    modalStyle: b.modalStyle
-      ? {
-          ...b.modalStyle,
-          bg: expandShortHex(b.modalStyle.bg),
-          text: expandShortHex(b.modalStyle.text),
-        }
-      : b.modalStyle,
-  }));
+  const boxes = (data.boxes || []).map((b) => {
+    const bg = b.background as any;
+    let background: BoxBackground | undefined = undefined;
+    if (!bg) background = undefined;
+    else if (bg.kind === "color") background = { kind: "color", color: expandShortHex((bg.color || bg.value) as string) || (bg.value as string) };
+    else if (bg.kind === "gradient")
+      background = {
+        kind: "gradient",
+        from: expandShortHex(bg.from) || bg.from,
+        to: expandShortHex(bg.to) || bg.to,
+        direction: bg.direction || "to bottom",
+      };
+    else if (bg.kind === "image")
+      background = {
+        kind: "image",
+        url: bg.url || bg.value,
+        scale: typeof bg.scale === "number" ? bg.scale : 100,
+        opacity: typeof bg.opacity === "number" ? bg.opacity : 1,
+        overlay: bg.overlay || "none",
+        overlayStrength: typeof bg.overlayStrength === "number" ? bg.overlayStrength : 0.4,
+      };
+
+    return {
+      ...b,
+      ctaMode: b.ctaMode || "button",
+      borderRadius: typeof b.borderRadius === "number" ? b.borderRadius : 12,
+      shadow: b.shadow || { intensity: 12, direction: "bottom-right" },
+      background,
+      modalStyle: b.modalStyle
+        ? {
+            ...b.modalStyle,
+            bg: expandShortHex(b.modalStyle.bg),
+            text: expandShortHex(b.modalStyle.text),
+          }
+        : b.modalStyle,
+    } as Box;
+  });
   return {
     ...data,
     boxes,
@@ -155,10 +192,13 @@ const DEFAULTS: SiteConfig = {
         "https://cdn.builder.io/api/v1/image/assets%2Ff923cd6a6a804325bb6d727c52cfce1d%2F7f9eafdf820d41e39483090ec9028652?format=webp&width=800",
       size: "small",
       height: 200,
-      background: { kind: "color", value: "bg-cyan-50" },
+      background: { kind: "color", color: "#ecfeff" },
       description: "Deep dives and analytics for smarter decisions.",
       buttonLabel: "Read More",
+      ctaMode: "button",
       modalEnabled: true,
+      borderRadius: 12,
+      shadow: { intensity: 12, direction: "bottom-right" },
       modalStyle: {
         bg: "#111111",
         text: "#ffffff",
@@ -174,10 +214,13 @@ const DEFAULTS: SiteConfig = {
         "https://cdn.builder.io/api/v1/image/assets%2Ff923cd6a6a804325bb6d727c52cfce1d%2Fc55bbf2b2f434abe8618539f059c18ff?format=webp&width=800",
       size: "small",
       height: 200,
-      background: { kind: "color", value: "bg-emerald-50" },
+      background: { kind: "color", color: "#ecfdf5" },
       description: "Automate workflows and boost productivity.",
       buttonLabel: "Read More",
+      ctaMode: "button",
       modalEnabled: true,
+      borderRadius: 12,
+      shadow: { intensity: 12, direction: "bottom-right" },
       modalStyle: {
         bg: "#111111",
         text: "#ffffff",
@@ -193,10 +236,13 @@ const DEFAULTS: SiteConfig = {
         "https://cdn.builder.io/api/v1/image/assets%2Ff923cd6a6a804325bb6d727c52cfce1d%2F4ecc3c55ebf34aa885d3e37a7e6beda4?format=webp&width=800",
       size: "small",
       height: 200,
-      background: { kind: "color", value: "bg-yellow-50" },
+      background: { kind: "color", color: "#fffbeb" },
       description: "Measure what matters with clarity.",
       buttonLabel: "Read More",
+      ctaMode: "button",
       modalEnabled: true,
+      borderRadius: 12,
+      shadow: { intensity: 12, direction: "bottom-right" },
       modalStyle: {
         bg: "#111111",
         text: "#ffffff",
@@ -212,10 +258,13 @@ const DEFAULTS: SiteConfig = {
         "https://cdn.builder.io/api/v1/image/assets%2Ff923cd6a6a804325bb6d727c52cfce1d%2F8fb791d1ba9d41dfb0dde327a0d2b698?format=webp&width=800",
       size: "large",
       height: 280,
-      background: { kind: "color", value: "bg-orange-50" },
+      background: { kind: "color", color: "#fff7ed" },
       description: "Our flagship offering solves complex problems elegantly.",
       buttonLabel: "Read More",
+      ctaMode: "button",
       modalEnabled: true,
+      borderRadius: 12,
+      shadow: { intensity: 12, direction: "bottom-right" },
       modalStyle: {
         bg: "#111111",
         text: "#ffffff",
@@ -231,10 +280,13 @@ const DEFAULTS: SiteConfig = {
         "https://cdn.builder.io/api/v1/image/assets%2Ff923cd6a6a804325bb6d727c52cfce1d%2F58a46bbc0a2d4a1ba926aa1d62774caf?format=webp&width=800",
       size: "medium",
       height: 200,
-      background: { kind: "color", value: "bg-blue-50" },
+      background: { kind: "color", color: "#eff6ff" },
       description: "Work together in real-time with ease.",
       buttonLabel: "Read More",
+      ctaMode: "button",
       modalEnabled: true,
+      borderRadius: 12,
+      shadow: { intensity: 12, direction: "bottom-right" },
       modalStyle: {
         bg: "#111111",
         text: "#ffffff",
@@ -250,10 +302,13 @@ const DEFAULTS: SiteConfig = {
         "https://cdn.builder.io/api/v1/image/assets%2Ff923cd6a6a804325bb6d727c52cfce1d%2Fb995546b58f94a9ab4fb5d25fb334121?format=webp&width=800",
       size: "medium",
       height: 200,
-      background: { kind: "color", value: "bg-pink-50" },
+      background: { kind: "color", color: "#fdf2f8" },
       description: "Pixel-perfect, user-centric interfaces.",
       buttonLabel: "Read More",
+      ctaMode: "button",
       modalEnabled: true,
+      borderRadius: 12,
+      shadow: { intensity: 12, direction: "bottom-right" },
       modalStyle: {
         bg: "#111111",
         text: "#ffffff",
