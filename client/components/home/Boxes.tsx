@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useSiteConfig } from "@/state/site-config";
+import { bgStyleFrom } from "@/lib/background";
 
 interface BoxProps {
   id: string;
@@ -27,24 +28,6 @@ function computeShadow(intensity: number, direction: string) {
   return `${x}px ${y}px ${blur}px ${spread}px rgba(0,0,0,0.15)`;
 }
 
-function bgStyle(box: any): React.CSSProperties {
-  const bg = box.background;
-  if (!bg) return {};
-  if (bg.kind === "color") return { background: bg.color };
-  if (bg.kind === "gradient")
-    return { background: `linear-gradient(${bg.direction || "to bottom"}, ${bg.from}, ${bg.to})` };
-  if (bg.kind === "image") {
-    const overlay = bg.overlay === "darken" ? `rgba(0,0,0,${bg.overlayStrength ?? 0.4})` : bg.overlay === "lighten" ? `rgba(255,255,255,${bg.overlayStrength ?? 0.4})` : undefined;
-    return {
-      backgroundImage: `${overlay ? `linear-gradient(${overlay}, ${overlay}),` : ""} url(${bg.url})`,
-      backgroundSize: `${bg.scale || 100}% auto`,
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-      opacity: bg.opacity == null ? 1 : bg.opacity,
-    } as React.CSSProperties;
-  }
-  return {};
-}
 
 function Box({ id }: BoxProps) {
   const { state } = useSiteConfig();
@@ -64,7 +47,7 @@ function Box({ id }: BoxProps) {
             "overflow-hidden",
           )}
           style={{
-            ...bgStyle(box),
+            ...bgStyleFrom(box.background as any),
             borderRadius: (box.borderRadius ?? 12) + "px",
             boxShadow: box.shadow ? computeShadow(box.shadow.intensity, box.shadow.direction) : undefined,
           }}
