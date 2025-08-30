@@ -50,3 +50,36 @@ export interface ContactResponse {
   message: string;
   fieldErrors?: Partial<Record<keyof ContactFormData, string>>;
 }
+
+// Messages storage (temporary backend store)
+export interface MessageItem {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  country?: string; // ISO code
+  type?: string; // inquiry type
+  mobile?: string;
+  approved?: boolean;
+  read?: boolean;
+  at: string; // ISO date
+}
+
+export interface ListMessagesResponse {
+  items: MessageItem[];
+}
+
+export interface CreateMessageRequest {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  country?: string;
+  type?: string;
+  mobile?: string;
+}
+
+export interface CreateMessageResponse {
+  item: MessageItem;
+}
