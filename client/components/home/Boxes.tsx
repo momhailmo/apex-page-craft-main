@@ -114,7 +114,7 @@ function Box({ id }: BoxProps) {
         }}
       >
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{box.title ?? "No Title"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {box.imageUrl && (
