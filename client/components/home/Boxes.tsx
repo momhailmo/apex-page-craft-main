@@ -20,31 +20,39 @@ function Box({ title, color, heightPx, imageUrl }: BoxProps) {
   const box = state.boxes.find((b) => b.title === title);
   const modalEnabled = box?.modalEnabled !== false;
   const modalStyle = box?.modalStyle || {};
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <button
           className={cn(
-            "relative w-full rounded-2xl shadow-sm overflow-hidden transition-transform hover:shadow-lg hover:scale-[1.01]",
+            "group relative w-full rounded-xl border bg-white shadow-sm transition hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-600 disabled:cursor-not-allowed",
+            "overflow-hidden",
             color,
           )}
-          style={{ height: heightPx }}
+          style={{ background: state.theme.boxDefaultBg || undefined }}
           disabled={!modalEnabled}
         >
+          {/* Accent bar using per-card background selection */}
+          <div className={cn("h-1 w-full", box?.background?.value)} />
+          {/* Image on top with controlled height */}
           {imageUrl && (
-            <>
+            <div className="w-full">
               <img
                 src={imageUrl}
                 alt={title}
-                className="absolute inset-0 h-full w-full object-cover"
+                className="w-full object-cover"
+                style={{ height: heightPx }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            </>
+            </div>
           )}
-          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-            <div className="font-semibold drop-shadow-md">{title}</div>
-            <div className="mt-2">
-              <span className="inline-flex items-center px-3 py-1.5 text-sm rounded-md bg-white/90 text-neutral-900 shadow">
+          {/* Card body */}
+          <div className="p-4">
+            <div className="text-base font-semibold text-neutral-900">
+              {title}
+            </div>
+            <div className="mt-3">
+              <span className="inline-flex items-center px-3 py-2 text-sm rounded-md bg-brand-600 text-white shadow group-hover:bg-brand-500 transition-colors">
                 {box?.buttonLabel || "Read More"}
               </span>
             </div>
@@ -52,14 +60,12 @@ function Box({ title, color, heightPx, imageUrl }: BoxProps) {
         </button>
       </DialogTrigger>
       <DialogContent
-        className="max-w-3xl"
+        className="md:max-w-2xl lg:max-w-3xl"
         style={{
           background: modalStyle.bg || undefined,
           color: modalStyle.text || undefined,
           boxShadow: modalStyle.shadow || undefined,
-          borderRadius: modalStyle.radius
-            ? `${modalStyle.radius}px`
-            : undefined,
+          borderRadius: modalStyle.radius ? `${modalStyle.radius}px` : undefined,
         }}
       >
         <DialogHeader>
@@ -75,7 +81,7 @@ function Box({ title, color, heightPx, imageUrl }: BoxProps) {
           )}
           {box?.description && (
             <div
-              className="text-sm"
+              className="text-sm leading-6"
               dangerouslySetInnerHTML={{ __html: box.description }}
             />
           )}
@@ -92,6 +98,7 @@ export default function Boxes() {
   const rowLarge = visible.find((b) => b.size === "large");
   const rowMedium = visible.filter((b) => b.size === "medium");
   const pad = state.settings?.sectionPadding?.boxes ?? 24;
+
   return (
     <section
       className="mx-auto max-w-[1200px] px-6 mt-10 space-y-6"
