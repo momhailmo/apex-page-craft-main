@@ -64,7 +64,9 @@ function Box({ title, color, heightPx, imageUrl }: BoxProps) {
           background: modalStyle.bg || undefined,
           color: modalStyle.text || undefined,
           boxShadow: modalStyle.shadow || undefined,
-          borderRadius: modalStyle.radius ? `${modalStyle.radius}px` : undefined,
+          borderRadius: modalStyle.radius
+            ? `${modalStyle.radius}px`
+            : undefined,
         }}
       >
         <DialogHeader>
