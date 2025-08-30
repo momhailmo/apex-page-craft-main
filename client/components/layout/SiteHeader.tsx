@@ -8,24 +8,21 @@ export default function SiteHeader() {
   const { state } = useSiteConfig();
   const [count, setCount] = useState(0);
   useEffect(() => {
-    const load = () => {
+    let stop = false;
+    const load = async () => {
       try {
-        setCount(
-          JSON.parse(localStorage.getItem("contactMessages") || "[]").filter(
-            (m: any) => !m.read,
-          ).length,
-        );
+        const res = await fetch("/api/messages");
+        const data = await res.json();
+        if (!stop) setCount((data.items || []).filter((m: any) => !m.read).length);
       } catch {
-        setCount(0);
+        if (!stop) setCount(0);
       }
     };
     load();
-    const onAny = () => load();
-    window.addEventListener("storage", onAny);
-    window.addEventListener("contact-messages-change", onAny as any);
+    const id = setInterval(load, 5000);
     return () => {
-      window.removeEventListener("storage", onAny);
-      window.removeEventListener("contact-messages-change", onAny as any);
+      stop = true;
+      clearInterval(id);
     };
   }, []);
   useEffect(() => {
