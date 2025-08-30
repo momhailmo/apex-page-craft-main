@@ -1,5 +1,5 @@
 import { useSiteConfig } from "@/state/site-config";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GripVertical } from "lucide-react";
 
 function expandShortHex(hex?: string): string | undefined {
