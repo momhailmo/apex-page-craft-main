@@ -33,7 +33,13 @@ export default function HeroSlider() {
   );
 
   return (
-    <section className="mx-auto max-w-[1200px] px-6 mt-6">
+    <section
+      className="mx-auto max-w-[1200px] px-6 mt-6"
+      style={{
+        paddingTop: state.settings?.sectionPadding?.hero ?? 24,
+        paddingBottom: state.settings?.sectionPadding?.hero ?? 24,
+      }}
+    >
       <div className="relative">
         <button
           aria-label="Previous"
