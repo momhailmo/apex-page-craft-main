@@ -49,6 +49,7 @@ export type HeaderConfig = {
   contactText: string;
   languages: Language[];
   selectedLang?: string;
+  background?: BoxBackground;
 };
 export type FooterConfig = {
   text: string;
@@ -59,6 +60,8 @@ export type FooterConfig = {
       string
     >
   >;
+  socialOrder?: ("facebook" | "twitter" | "instagram" | "linkedin" | "youtube" | "github")[];
+  background?: BoxBackground;
 };
 export type ThemeConfig = {
   brand: string;
@@ -165,6 +168,7 @@ const DEFAULTS: SiteConfig = {
       { code: "ar", label: "العربية" },
     ],
     selectedLang: "en",
+    background: { kind: "color", color: "#ffffff" },
   },
   slides: [
     {
@@ -346,6 +350,8 @@ const DEFAULTS: SiteConfig = {
   footer: {
     text: `© ${new Date().getFullYear()} NovaTech. All rights reserved.`,
     socials: {},
+    socialOrder: ["facebook","twitter","instagram","linkedin"],
+    background: { kind: "color", color: "#0a0a0a" },
   },
   theme: {
     brand: "#0ea5e9",
