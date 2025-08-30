@@ -29,5 +29,11 @@ export function createServer() {
   // Contact route
   app.post("/api/contact", postContact);
 
+  // Messages API (temporary JSON-file persistence)
+  app.get("/api/messages", listMessages);
+  app.post("/api/messages", createMessage);
+  app.patch("/api/messages/:id", updateMessage);
+  app.delete("/api/messages/:id", deleteMessage);
+
   return app;
 }
