@@ -16,8 +16,15 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (html: s
   const [html, setHtml] = useState<string>(value || "");
   const ref = useRef<HTMLDivElement | null>(null);
   useEffect(() => setHtml(value || ""), [value]);
+  const focusEditor = () => ref.current && ref.current.focus();
   const exec = (cmd: string, arg?: string) => {
+    focusEditor();
     document.execCommand(cmd, false, arg);
+    onChange(ref.current?.innerHTML || "");
+  };
+  const insertEmoji = (emoji: string) => {
+    focusEditor();
+    document.execCommand("insertText", false, emoji);
     onChange(ref.current?.innerHTML || "");
   };
   return (
