@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Globe, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSiteConfig } from "@/state/site-config";
+import { bgStyleFrom } from "@/lib/background";
 
 export default function SiteHeader() {
   const { state } = useSiteConfig();
@@ -33,7 +34,8 @@ export default function SiteHeader() {
       (el as HTMLElement).style.background = state.theme.pageBg || "#ffffff";
   }, [state.theme.pageBg]);
   return (
-    <header className={cn("w-full border-b border-neutral-200", "bg-white")}>
+    <header className={cn("w-full border-b border-neutral-200")}
+      style={bgStyleFrom(state.header.background as any)}>
       <div className="mx-auto max-w-[1200px] px-6 py-4 flex items-center justify-between h-[70px]">
         <a
           href="/"
