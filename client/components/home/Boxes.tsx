@@ -80,7 +80,7 @@ function Box({ title, color, heightPx, imageUrl }: BoxProps) {
           )}
           {box?.description && (
             <div
-              className="text-sm leading-6"
+              className="text-sm leading-6 whitespace-normal break-words overflow-x-hidden"
               dangerouslySetInnerHTML={{ __html: box.description }}
             />
           )}
