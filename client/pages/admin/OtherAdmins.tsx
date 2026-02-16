@@ -9,6 +9,170 @@ function readFileAsDataURL(file: File): Promise<string> {
   });
 }
 
+function BackgroundControls({
+  value,
+  onChange,
+}: {
+  value: any;
+  onChange: (v: any) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm">Background</label>
+      <div className="flex flex-wrap gap-2">
+        <select
+          value={value?.kind || "color"}
+          onChange={(e) =>
+            onChange(
+              e.target.value === "color"
+                ? { kind: "color", color: "#ffffff" }
+                : e.target.value === "gradient"
+                  ? {
+                      kind: "gradient",
+                      from: "#ffffff",
+                      to: "#f3f4f6",
+                      direction: "to bottom",
+                    }
+                  : {
+                      kind: "image",
+                      url: "",
+                      scale: 100,
+                      opacity: 1,
+                      overlay: "none",
+                      overlayStrength: 0.4,
+                    },
+            )
+          }
+          className="border rounded px-2 py-1 text-sm"
+        >
+          <option value="color">Color</option>
+          <option value="gradient">Gradient</option>
+          <option value="image">Image</option>
+        </select>
+        {value?.kind === "color" && (
+          <input
+            type="color"
+            value={value.color || "#ffffff"}
+            onChange={(e) => onChange({ kind: "color", color: e.target.value })}
+          />
+        )}
+        {value?.kind === "gradient" && (
+          <div className="flex items-center gap-2">
+            <input
+              type="color"
+              value={value.from || "#ffffff"}
+              onChange={(e) => onChange({ ...value, from: e.target.value })}
+            />
+            <input
+              type="color"
+              value={value.to || "#f3f4f6"}
+              onChange={(e) => onChange({ ...value, to: e.target.value })}
+            />
+            <select
+              value={value.direction || "to bottom"}
+              onChange={(e) =>
+                onChange({ ...value, direction: e.target.value })
+              }
+              className="border rounded px-2 py-1 text-sm"
+            >
+              <option value="to top">to top</option>
+              <option value="to bottom">to bottom</option>
+              <option value="to left">to left</option>
+              <option value="to right">to right</option>
+              <option value="to top right">to top right</option>
+              <option value="to top left">to top left</option>
+              <option value="to bottom right">to bottom right</option>
+              <option value="to bottom left">to bottom left</option>
+            </select>
+          </div>
+        )}
+        {value?.kind === "image" && (
+          <div className="space-y-2 w-full">
+            {value.url && (
+              <img
+                src={value.url}
+                alt="bg"
+                className="h-14 w-24 object-cover rounded"
+              />
+            )}
+            <label className="text-xs px-2 py-1 rounded bg-neutral-800 text-white cursor-pointer inline-block">
+              Upload Background
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const f = e.target.files?.[0];
+                  if (!f) return;
+                  const url = await new Promise<string>((res, rej) => {
+                    const r = new FileReader();
+                    r.onload = () => res(r.result as string);
+                    r.onerror = rej;
+                    r.readAsDataURL(f);
+                  });
+                  onChange({ ...value, url });
+                }}
+              />
+            </label>
+            <div className="flex items-center gap-2">
+              <span className="text-xs w-16">Scale</span>
+              <input
+                type="range"
+                min={50}
+                max={200}
+                value={value.scale || 100}
+                onChange={(e) =>
+                  onChange({ ...value, scale: Number(e.target.value) })
+                }
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs w-16">Opacity</span>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={value.opacity ?? 1}
+                onChange={(e) =>
+                  onChange({ ...value, opacity: Number(e.target.value) })
+                }
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs w-16">Adjust</span>
+              <select
+                value={value.overlay || "none"}
+                onChange={(e) =>
+                  onChange({ ...value, overlay: e.target.value })
+                }
+                className="border rounded px-2 py-1 text-sm"
+              >
+                <option value="none">None</option>
+                <option value="darken">Darken</option>
+                <option value="lighten">Lighten</option>
+              </select>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={value.overlayStrength ?? 0.4}
+                onChange={(e) =>
+                  onChange({
+                    ...value,
+                    overlayStrength: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function HeaderAdmin() {
   const { state, set } = useSiteConfig();
   const uploadLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +254,10 @@ export function HeaderAdmin() {
           />
         </label>
       </div>
+      <BackgroundControls
+        value={state.header.background}
+        onChange={(v) => set({ header: { ...state.header, background: v } })}
+      />
       <div>
         <div className="mb-2 font-medium">Languages</div>
         <div className="space-y-2">
@@ -144,8 +312,30 @@ export function FooterAdmin() {
         socials: { ...(state.footer.socials || {}), [k]: v },
         text: state.footer.text,
         extraText: state.footer.extraText,
+        socialOrder: state.footer.socialOrder || [
+          "facebook",
+          "twitter",
+          "instagram",
+          "linkedin",
+        ],
       },
     });
+  const reorder = (k: string, dir: -1 | 1) => {
+    const order = [
+      ...(state.footer.socialOrder || [
+        "facebook",
+        "twitter",
+        "instagram",
+        "linkedin",
+      ]),
+    ];
+    const idx = order.indexOf(k);
+    if (idx === -1) return;
+    const ni = Math.min(order.length - 1, Math.max(0, idx + dir));
+    order.splice(idx, 1);
+    order.splice(ni, 0, k);
+    set({ footer: { ...state.footer, socialOrder: order } });
+  };
   return (
     <div className="space-y-3">
       <h2 className="text-xl font-semibold">Footer</h2>
@@ -184,9 +374,27 @@ export function FooterAdmin() {
               placeholder={`https://${k}.com/...`}
               className="flex-1 border rounded px-2 py-1"
             />
+            <div className="flex items-center gap-1">
+              <button
+                className="text-xs px-2 py-1 rounded bg-neutral-100"
+                onClick={() => reorder(k, -1)}
+              >
+                ↑
+              </button>
+              <button
+                className="text-xs px-2 py-1 rounded bg-neutral-100"
+                onClick={() => reorder(k, 1)}
+              >
+                ↓
+              </button>
+            </div>
           </div>
         ))}
       </div>
+      <BackgroundControls
+        value={state.footer.background}
+        onChange={(v) => set({ footer: { ...state.footer, background: v } })}
+      />
     </div>
   );
 }

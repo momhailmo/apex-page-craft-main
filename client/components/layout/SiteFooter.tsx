@@ -1,11 +1,22 @@
 import { Linkedin, Instagram, Twitter, Facebook } from "lucide-react";
 
 import { useSiteConfig } from "@/state/site-config";
+import { bgStyleFrom } from "@/lib/background";
 
 export default function SiteFooter() {
   const { state } = useSiteConfig();
+  const socialOrder = state.footer.socialOrder || [
+    "facebook",
+    "twitter",
+    "instagram",
+    "linkedin",
+  ];
+  const socials = state.footer.socials || {};
   return (
-    <footer className="mt-24 bg-footer text-footer-foreground">
+    <footer
+      className="mt-24 text-footer-foreground"
+      style={bgStyleFrom(state.footer.background as any)}
+    >
       <div className="mx-auto max-w-[1200px] px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         <div>
           <h3 className="text-lg font-semibold mb-3">
@@ -44,42 +55,31 @@ export default function SiteFooter() {
             <li>123 Innovation Dr, San Francisco, CA</li>
           </ul>
           <div className="flex gap-3 mt-4">
-            {state.footer.socials?.facebook && (
-              <a
-                aria-label="Facebook"
-                href={state.footer.socials.facebook}
-                className="hover:opacity-90"
-              >
-                <Facebook className="h-5 w-5 text-[#1877F2]" />
-              </a>
-            )}
-            {state.footer.socials?.twitter && (
-              <a
-                aria-label="Twitter"
-                href={state.footer.socials.twitter}
-                className="hover:opacity-90"
-              >
-                <Twitter className="h-5 w-5 text-[#1DA1F2]" />
-              </a>
-            )}
-            {state.footer.socials?.instagram && (
-              <a
-                aria-label="Instagram"
-                href={state.footer.socials.instagram}
-                className="hover:opacity-90"
-              >
-                <Instagram className="h-5 w-5 text-[#E1306C]" />
-              </a>
-            )}
-            {state.footer.socials?.linkedin && (
-              <a
-                aria-label="LinkedIn"
-                href={state.footer.socials.linkedin}
-                className="hover:opacity-90"
-              >
-                <Linkedin className="h-5 w-5 text-[#0A66C2]" />
-              </a>
-            )}
+            {socialOrder.map((k) => {
+              const url = (socials as any)[k];
+              if (!url) return null;
+              return (
+                <a
+                  key={k}
+                  aria-label={k}
+                  href={url}
+                  className="hover:opacity-90"
+                >
+                  {k === "facebook" && (
+                    <Facebook className="h-5 w-5 text-[#1877F2]" />
+                  )}
+                  {k === "twitter" && (
+                    <Twitter className="h-5 w-5 text-[#1DA1F2]" />
+                  )}
+                  {k === "instagram" && (
+                    <Instagram className="h-5 w-5 text-[#E1306C]" />
+                  )}
+                  {k === "linkedin" && (
+                    <Linkedin className="h-5 w-5 text-[#0A66C2]" />
+                  )}
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>

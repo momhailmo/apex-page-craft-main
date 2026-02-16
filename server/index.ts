@@ -4,6 +4,12 @@ import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { getSlider, updateSlider } from "./routes/slider";
 import { postContact } from "./routes/contact";
+import {
+  listMessages,
+  createMessage,
+  updateMessage,
+  deleteMessage,
+} from "./routes/messages";
 
 export function createServer() {
   const app = express();
@@ -27,6 +33,12 @@ export function createServer() {
 
   // Contact route
   app.post("/api/contact", postContact);
+
+  // Messages API (temporary JSON-file persistence)
+  app.get("/api/messages", listMessages);
+  app.post("/api/messages", createMessage);
+  app.patch("/api/messages/:id", updateMessage);
+  app.delete("/api/messages/:id", deleteMessage);
 
   return app;
 }
